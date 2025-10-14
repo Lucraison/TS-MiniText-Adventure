@@ -6,7 +6,21 @@ using System.Threading.Tasks;
 
 namespace TextAdventureGame
 {
-    internal class Item
+    public class Item
     {
+        public Item(string id, string description)
+        {
+            Id = id;
+            Description = description;
+        }
+
+
+        public string Id { get;}
+        public string Description { get;}
+
+        public override string ToString()
+        {
+            return $"{Id}: {Description}";
+        }
     }
 }

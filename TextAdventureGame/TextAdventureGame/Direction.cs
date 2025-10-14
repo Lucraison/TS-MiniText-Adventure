@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace TextAdventureGame
 {
-    internal class Direction
+    public enum Direction
     {
+        North,
+        East,
+        South,
+        West
     }
+    
 }
