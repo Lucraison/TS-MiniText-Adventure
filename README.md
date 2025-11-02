@@ -55,9 +55,9 @@ Solution 'TextAdventure'
     └── WorldRulesTests.cs        Integration tests: beweging, sleutel, dood, fight
 ```
 
-> **Alle klassen uit de opdracht zijn geïmplementeerd**: Item, Inventory, Room, World (Rooms), Direction, GameSetup, Program.  
-> **Alle commando’s werken**: help, look, inventory, go n|e|s|w, take <id>, fight, quit.  
-> **Alle spelregels zijn correct**: dodelijke kamer, sleutel vereist, monster alleen met zwaard, vluchten = dood.
+**Alle klassen uit de opdracht zijn geïmplementeerd**: Item, Inventory, Room, World (Rooms), Direction, GameSetup, Program.  
+**Alle commando’s werken**: help, look, inventory, go n|e|s|w, take <id>, fight, quit.  
+**Alle spelregels zijn correct**: dodelijke kamer, sleutel vereist, monster alleen met zwaard, vluchten = dood.
 
 ---
 
@@ -98,3 +98,25 @@ We hebben een **drievoudige teststrategie** toegepast:
 
 5. Tests run je via **Test Explorer** om werking te checken.
 
+## Winnend Pad (Monster verslaan + Spel winnen)
+
+Volg deze stappen om **het monster te verslaan** én **het spel te winnen**:
+
+1. go east
+2. take key
+3. go west
+4. go south
+5. take sword
+6. go south
+7. fight (met zwaard → monster verslagen)
+8. go north
+9. go north
+10. go east
+11. go west
+12. go north (met sleutel → deur open)
+
+**Belangrijk**:  
+ - Zonder **zwaard** → **fight** = **dood**  
+ - Zonder **sleutel** → **go north** bij deur = **geblokkeerd**  
+ - Weglopen van monster zonder te vechten = **dood**  
+ - **go west** vanaf start = **direct dood**
