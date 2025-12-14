@@ -40,6 +40,17 @@ public static class GameSetup
         east.Connect(Direction.West, start);
         north.Connect(Direction.South, start);
         deep.Connect(Direction.North, south);
+        var secret1 = new Room("Secret1", "Je betreedt een verborgen kamer. De muren voelen onnatuurlijk koud.");
+        var secret2 = new Room("Secret2", "Een tweede verborgen kamer. Je voelt dat hier iets afgesloten is.");
+        east.Connect(Direction.North, secret1);
+        secret1.Connect(Direction.South, east);
+
+        deep.Connect(Direction.South, secret2);
+        secret2.Connect(Direction.North, deep);
+        east.AddItem(new Item("note", "Notitie", "Op de muur staat gekerfd: \"De sleutel tot vrijheid is kennis.\""));
+
+
+
 
         return new World(start, north, deep);
     }

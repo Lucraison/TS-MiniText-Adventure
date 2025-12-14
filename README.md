@@ -1,122 +1,128 @@
-# Mini Text Adventure: Project Documentatie
+# Secure Text Adventure
 
-**Groep CAAN**  
-- [Charafeddine Bukraa](https://github.com/sharaftien)  
-- [Arthur Öksüz](https://github.com/Arthur-Oksuz)  
-- [Amer Ahmady](https://github.com/amerahmady)  
-- [Nicolas Herrera Santibanez](https://github.com/Lucraison)  
-
+## Groep CAAN
+- [Charafeddine Bukraa](https://github.com/sharaftien)
+- [Arthur Öksüz](https://github.com/Arthur-Oksuz)
+- [Amer Ahmady](https://github.com/amerahmady)
+- [Nicolas Herrera Santibanez](https://github.com/Lucraison)
 
 ---
 
 ## Project Overzicht
-We hebben in dit project een volledig **Mini Text Adventure** spel gemaakt volgens de opdracht.\
-Het spel bevat zes kamers, twee items, een monster, en spelregels rond beweging, inventory, vechten, en winnen en verliezen.
 
-Het project is is opgedeeld in duidelijke lagen: **Domain**, **Gameplay**, **Program**.\
-We passen de **SOLID-principes** toe voor onderhoudbaarheid en testbaarheid.  
+In dit project hebben we onze **Mini Text Adventure** uitgebreid met **security-functionaliteit**.
+Het spel bestaat uit een **console-applicatie** en een **Minimal API** die samen zorgen voor gameplay en beveiliging.
 
-Alle vereisten zijn aanwezig:  
-- **Wereld** met 6 kamers en verbindingen  
-- **Items** oppakken en gebruiken  
-- **Sleutel** om deur te openen  
-- **Monster** dat alleen met zwaard verslagen kan worden  
-- **Dodelijke kamer** (west)  
-- Volledige **commando-ondersteuning** (`help`, `look`, `inventory`, `go`, `take`, `fight`, `quit`)  
-- **Testing** (Unit Testing, Integration Testing, Behaviour Driven Testing)
+De speler kan het spel **enkel starten na succesvolle authenticatie**.
+Bepaalde kamers zijn **versleuteld** en kunnen enkel geopend worden met een combinatie van:
+- een **keyshare** via de API
+- een **passphrase** gevonden in het spel
 
 ---
 
-## Bestandstructuur & Functionaliteit
+## Projectstructuur
 
-```
-Solution 'TextAdventure'
+TextAdventure.sln
 ├── TextAdventure
-│   ├── Domain
-│   │   ├── Direction.cs          Enum + TryParse voor N/E/S/W (richting parsing)
-│   │   ├── Inventory.cs          Beheert spelerinventaris (add/remove/contains/describe)
-│   │   ├── Item.cs               Item met ID, naam, beschrijving (onveranderlijk)
-│   │   └── Room.cs               Kamer met naam, beschrijving, items, exits, speciale vlaggen
-│   ├── Gameplay
-│   │   ├── GameSetup.cs          Bouwt de volledige wereld op (kamers, items, verbindingen)
-│   │   ├── Input.cs              Parse-t console-input naar (command, argument)
-│   │   └── World.cs              Gameplay logica: beweging, vechten, win/dead, regels
-│   └── Program.cs                Console interface: input, commando's, output
+│ ├── Program.cs Console interface & spelstart
+│ ├── Gameplay Spelverloop en regels
+│ ├── Rooms Kamers en wereldstructuur
+│ └── Security Login, tokengebruik, decryptie
+│
+├── TextAdventure.Api
+│ ├── Program.cs Minimal API setup
+│ ├── Controllers Authenticatie & sleutelbeheer
+│ ├── Models Users, tokens, requests
+│ ├── Services Hashing, JWT, encryptie
+│ └── Security Security-configuratie
 │
 └── TextAdventure.Tests
-    ├── Features
-    │   ├── Monster.feature       Gherkin scenario's voor monsterinteracties
-    │   └── WinPath.feature       Gherkin scenario's voor win path
-    ├── BddRunner.cs              Given/When/Then runner voor BDD-tests
-    ├── InventoryTests.cs         Unit tests: Add, Remove, Contains
-    ├── RoomTests.cs              Unit tests: Take item uit kamer
-    ├── MonsterFeatureTests.cs    BDD: alle monster-scenario's
-    ├── WinPathFeatureTests.cs    BDD: win path
-    └── WorldRulesTests.cs        Integration tests: beweging, sleutel, dood, fight
-```
-
-**Alle klassen uit de opdracht zijn geïmplementeerd**: Item, Inventory, Room, World (Rooms), Direction, GameSetup, Program.  
-**Alle commando’s werken**: help, look, inventory, go n|e|s|w, take <id>, fight, quit.  
-**Alle spelregels zijn correct**: dodelijke kamer, sleutel vereist, monster alleen met zwaard, vluchten = dood.
+├── UnitTests
+└── IntegrationTests
 
 ---
 
-## Testaanpak
+## Security
 
-We hebben een **drievoudige teststrategie** toegepast:
+### Authenticatie & Autorisatie
+- Gebruikers registreren en loggen in via de **Minimal API**
+- Wachtwoorden worden **gehasht met SHA-256**
+- Bij succesvolle login wordt een **JWT-token** gegenereerd
+- De console-app gebruikt dit token voor beveiligde API-calls
+- Ongeldige of verlopen tokens worden geweigerd
 
-### 1. Unit Testing (xUnit)
-- **InventoryTests.cs**: Testen van **Add**, **Remove**, **Contains**
-- **RoomTests.cs**: Testen van **Take** verwijdert item correct
-- Geïsoleerde, snelle tests zonder afhankelijkheden
+### Encryptie
+- Minstens twee kamers zijn **versleuteld**
+- Encryptie gebeurt met **X.509 / CMS**
+- Voor toegang tot deze kamers zijn nodig:
+  - een **keyshare** van de API
+  - een **passphrase** uit het spel
 
-### 2. Integratietesten
-- **WorldRulesTests.cs**: Testen van complexe regels:
-  - West = direct dood
-  - North zonder sleutel = geblokkeerd
-  - Fight zonder zwaard = dood
-  - Fight met zwaard = monster verslagen
-  - Vluchten van monster = dood
-- Gebruiken volledige **GameSetup.BuildWorld()** voor realistisch gedrag
-
-### 3. Behavior-Driven Testing
-- **Monster.feature** & **WinPath.feature**: Leesbare scenario’s
-- **BddRunner.cs**: Verwerkt **Given**, **When**, **Then**, **And**
-- End-to-end validation van spelverloop
+### Secure Coding
+- Inputvalidatie op console- en API-niveau
+- Geen gevoelige data in logs
+- Scheiding van verantwoordelijkheden
+- Tokens en sleutels worden gecontroleerd op geldigheid
 
 ---
 
 ## Spel Starten
 
-1. Open **TextAdventure.sln**
-2. Bouw de solution (**Ctrl+Shift+B**)  
-3. Run het **TextAdventure** project (**F5**)  
-4. Typ commando’s in de console:  
-   - **help** → lijst met commando’s  
-   - **look** → kamer, items, uitgangen  
-   - **go n** / **take key** / **fight** etc.  
+### Vereisten
+- .NET SDK 7.0 of hoger
+- Visual Studio
 
-5. Tests run je via **Test Explorer** om werking te checken.
+### 1. API starten
+1. Open `TextAdventure.sln`
+2. Zet **TextAdventure.Api** als startup project
+3. Start de applicatie  
+   → De API draait lokaal op `https://localhost:xxxx`
 
-## Winnend Pad (Monster verslaan + Spel winnen)
+### 2. Console game starten
+1. Zet **TextAdventure** als startup project
+2. Start de applicatie
+3. Log in met een geldige gebruiker
+4. Het spel start automatisch na succesvolle login
 
-Volg deze stappen om **het monster te verslaan** én **het spel te winnen**:
+---
 
-1. go east
-2. take key
-3. go west
-4. go south
-5. take sword
-6. go south
-7. fight (met zwaard → monster verslagen)
-8. go north
-9. go north
-10. go east
-11. go west
-12. go north (met sleutel → deur open)
+## Hoe speel je het spel?
 
-**Belangrijk**:  
- - Zonder **zwaard** → **fight** = **dood**  
- - Zonder **sleutel** → **go north** bij deur = **geblokkeerd**  
- - Weglopen van monster zonder te vechten = **dood**  
- - **go west** vanaf start = **direct dood**
+### Beschikbare commando’s
+- `help` → toont alle beschikbare commando’s
+- `look` → beschrijft de huidige kamer, items en uitgangen
+- `inventory` → toont je inventaris
+- `go n | e | s | w` → beweeg naar een andere kamer
+- `take <item>` → neem een item op
+- `fight` → vecht met het monster
+- `quit` → stop het spel
+
+### Belangrijke spelregels
+- **Zonder zwaard** → `fight` = **dood**
+- **Zonder sleutel** → bepaalde deuren blijven gesloten
+- **Weglopen van het monster** = **dood**
+- Sommige kamers zijn **dodelijk**
+- Versleutelde kamers vereisen correcte decryptie
+
+---
+
+## Tests
+
+Het project bevat tests voor:
+- gameplay-regels
+- security-logica
+- integratie tussen console en API
+
+Tests kunnen uitgevoerd worden via **Test Explorer** in Visual Studio.
+
+---
+
+## Conclusie
+
+Dit project combineert:
+- een werkende **text adventure**
+- veilige **authenticatie met hashing en JWT**
+- **encryptie en sleutelbeheer**
+- duidelijke scheiding tussen gameplay en security
+
+Het spel is enkel speelbaar binnen een **beveiligde context**, conform de opdrachtvereisten.

@@ -1,0 +1,114 @@
+### =========================
+### Health check (publiek)
+### =========================
+GET https://localhost:7007/health
+
+
+
+### =========================
+### Register Player (1x doen)
+### =========================
+POST https://localhost:7007/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "amer",
+  "password": "Test1234",
+  "role": "Player"
+}
+
+
+
+### =========================
+### Login (krijg JWT)
+### =========================
+POST https://localhost:7007/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "amer",
+  "password": "Test1234"
+}
+
+
+
+### =========================
+### Me (JWT verplicht)
+### =========================
+GET https://localhost:7007/api/auth/me
+Authorization: Bearer PLAK_HIER_JE_TOKEN
+
+
+
+### =========================
+### Keyshare secret1 (Player ? OK)
+### =========================
+GET https://localhost:7007/api/keys/keyshare/secret1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbWVyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6ImFtZXIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQbGF5ZXIiLCJleHAiOjE3NjU2NDczMzgsImlzcyI6InRleHRhZHZlbnR1cmUtYXBpIiwiYXVkIjoidGV4dGFkdmVudHVyZS1jbGllbnQifQ.MvGIAtlNP79e5kyA6TKnLq4R1ykjiLCWBcGyW-fPpQg
+
+GET https://localhost:7007/api/keys/keyshare/secret1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbWVyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZSI6ImFtZXIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJQbGF5ZXIiLCJleHAiOjE3NjU2NDczMzgsImlzcyI6InRleHRhZHZlbnR1cmUtYXBpIiwiYXVkIjoidGV4dGFkdmVudHVyZS1jbGllbnQifQ.MvGIAtlNP79e5kyA6TKnLq4R1ykjiLCWBcGyW-fPpQg
+
+
+### =========================
+### Keyshare secret2 (Player ? OK)
+### =========================
+GET https://localhost:7007/api/keys/keyshare/secret2
+Authorization: Bearer PLAK_HIER_JE_TOKEN
+
+
+
+### =========================
+### Keyshare onbekend (404 verwacht)
+### =========================
+GET https://localhost:7007/api/keys/keyshare/doesnotexist
+Authorization: Bearer PLAK_HIER_JE_TOKEN
+
+
+
+### =========================
+### Keyshare zonder token (401 verwacht)
+### =========================
+GET https://localhost:7007/api/keys/keyshare/secret1
+
+
+
+### =========================
+### Register Admin (optioneel)
+### =========================
+POST https://localhost:7007/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "
+  
+  d",
+  "password": "Admin1234",
+  "role": "Admin"
+}
+
+
+
+### =========================
+### Login fout (lockout test)
+### =========================
+POST https://localhost:7007/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "amer",
+  "password": "fout"
+}
+
+
+
+### =========================
+### Login na lockout (423 verwacht)
+### =========================
+POST https://localhost:7007/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "amer",
+  "password": "Test1234"
+}

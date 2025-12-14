@@ -7,4 +7,33 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<None Remove="EncryptedRooms\room_secret1.enc" />
+		<None Remove="EncryptedRooms\room_secret2.enc" />
+		<None Remove="EncryptedRooms\room_secret1.pfx" />
+		<None Remove="EncryptedRooms\room_secret2.pfx" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<Content Include="EncryptedRooms\room_secret1.enc">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="EncryptedRooms\room_secret2.enc">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		<Content Include="EncryptedRooms\room_secret1.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="EncryptedRooms\room_secret2.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+
+	<ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.1" />
+  </ItemGroup>
+
 </Project>

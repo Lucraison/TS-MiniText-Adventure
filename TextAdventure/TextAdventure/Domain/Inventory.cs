@@ -32,4 +32,10 @@ public sealed class Inventory
         foreach (var i in _items) sb.AppendLine($"- {i}");
         return sb.ToString();
     }
+
+    public Item? Get(string id)
+    {
+        return _items.FirstOrDefault(i => i.Id == id.ToLowerInvariant());
+    }
+
 }

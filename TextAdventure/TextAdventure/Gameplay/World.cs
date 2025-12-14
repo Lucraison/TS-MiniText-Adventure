@@ -35,29 +35,40 @@ public sealed class World
         inv.Add(it);
         return $"Je nam: {it}.";
     }
-
     public ActionResult Go(Direction dir, Inventory inv)
+    => Go(dir, inv, noclip: false);
+
+    public ActionResult Go(Direction dir, Inventory inv, bool noclip)
+
     {
         // Regel: monsterkamer verlaten terwijl monster leeft => dood.
-        if (Current == _monsterRoom && _monsterRoom.MonsterAlive)
+        // Regel: monsterkamer verlaten terwijl monster leeft => dood (tenzij noclip)
+        if (!noclip && Current == _monsterRoom && _monsterRoom.MonsterAlive)
             return new ActionResult(EndState.Dead, "Je probeert te vluchten… Het monster sleurt je terug. Je bent DOOD.");
+
 
         if (!Current.TryGetExit(dir, out var target) || target == null)
             return new ActionResult(EndState.None, "Daar is geen uitgang.");
 
-        if (target.IsDeadly)
+        if (!noclip && target.IsDeadly)
         {
             Current = target;
             return new ActionResult(EndState.Dead, $"Je stapt {dir.ToString().ToLower()}… {target.Name}: {target.Description}\nGAME OVER — je bent DOOD.");
         }
 
+
         if (target == _winDoor)
         {
-            if (!inv.Contains("key"))
+            if (!noclip && !inv.Contains("key"))
                 return new ActionResult(EndState.None, "De deur zit op slot. Je hebt een sleutel nodig.");
+
             Current = target;
-            return new ActionResult(EndState.Win, "Je opent de deur met de sleutel… Zonlicht! JE WINT! 🎉");
+            return new ActionResult(EndState.Win,
+                noclip
+                    ? "Je glipt zonder moeite door de deur (noclip). JE WINT! 🎉"
+                    : "Je opent de deur met de sleutel… Zonlicht! JE WINT! 🎉");
         }
+
 
         Current = target;
         return new ActionResult(EndState.None, DescribeCurrent(withExits: true, withItems: true, withMonster: true));
